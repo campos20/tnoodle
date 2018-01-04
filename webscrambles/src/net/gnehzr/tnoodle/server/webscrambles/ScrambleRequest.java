@@ -571,7 +571,7 @@ class ScrambleRequest {
             offsetTop -= fontSize + 2;
         }
 
-        // the 100 number in the fit text function is just some big number. Hopefully, fitting the width will be enough to fit the height.
+        // The 100 number in the fit text function is just some big number. Hopefully, fitting the width will be enough to fit the height.
         Rectangle rect = new Rectangle(competitorInfoLeft+(right-competitorInfoLeft)/2, top-offsetTop, right-competitorInfoLeft, 100);
 
         fitAndShowText(cb, globalTitle, bf, rect, fontSize, PdfContentByte.ALIGN_CENTER);
@@ -647,7 +647,90 @@ class ScrambleRequest {
 
             offsetTop += fontSize + marginBottom;
         }
+        
+        // Table
+        int tableHeight = 160;
+        final int tableLines = 8; // Currently, we have 8 lines (3 face moves, 3 rotations and titles)
+        int columns = 8;
+        int movesOffset = 5;
+        int cellWidth = 25;
+        
+        Font smallfont = new Font(sansSerifFont, 10);
+        PdfPTable table = new PdfPTable(columns);
+        table.setTotalWidth(new float[]{movesOffset, cellWidth, cellWidth, cellWidth, cellWidth, cellWidth, cellWidth, competitorInfoLeft-left-movesOffset-6*cellWidth}); // The last part makes the table width fit the rules rectangle
+        table.setLockedWidth(true);
 
+        String[] faceMoves = {"F", "R", "U", "B", "L", "D"};
+        String[] rotations = {"f", "r", "u", "b", "l", "d"};
+        String[] directionModifiers = {"", "'", "2"};
+        String[] direction = {
+                translate("fmc.clockwise", locale),
+                translate("fmc.counterClockwise", locale),
+                translate("fmc.double", locale)};
+        
+        // Face moves
+        PdfPCell cell = new PdfPCell(new Phrase("  - "+translate("fmc.faceMoves", locale), smallfont));
+        cell.setFixedHeight(tableHeight/tableLines);
+        cell.setColspan(columns);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.NO_BORDER);
+        table.addCell(cell);
+        for (int j=0; j<directionModifiers.length; j++){
+            cell = new PdfPCell(new Phrase("", smallfont)); // Offset
+            cell.setFixedHeight(tableHeight/tableLines);
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+            for (int i=0; i<faceMoves.length; i++){
+                cell = new PdfPCell(new Phrase(faceMoves[i]+directionModifiers[j], smallfont));
+                cell.setFixedHeight(tableHeight/tableLines);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBorder(Rectangle.NO_BORDER);
+                table.addCell(cell);
+            }
+            cell = new PdfPCell(new Phrase(direction[j], smallfont));
+            cell.setFixedHeight(tableHeight/tableLines);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+        }
+        
+        // Rotations
+        cell = new PdfPCell(new Phrase("  - "+translate("fmc.rotations", locale), smallfont));
+        cell.setFixedHeight(tableHeight/tableLines);
+        cell.setColspan(columns);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.NO_BORDER);
+        table.addCell(cell);
+        for (int j=0; j<directionModifiers.length; j++){
+            cell = new PdfPCell(new Phrase("", smallfont)); // Offset
+            cell.setFixedHeight(tableHeight/tableLines);
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+            for (int i=0; i<rotations.length; i++){
+                cell = new PdfPCell(new Phrase("["+rotations[i]+directionModifiers[j]+"]", smallfont));
+                cell.setFixedHeight(tableHeight/tableLines);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBorder(Rectangle.NO_BORDER);
+                table.addCell(cell);
+            }
+            cell = new PdfPCell(new Phrase(direction[j], smallfont));
+            cell.setFixedHeight(tableHeight/tableLines);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+        }
+        
+        // This variable aligns the marker for "Face moves" and "Rotations" with the rules markers.
+        int offsetTable = 2;
+        
+        // Position the table
+        table.writeSelectedRows(0, -1, left-offsetTable, scrambleBorderTop+tableHeight, cb);
+        
+        // Rules
         int MAGIC_NUMBER = 30; // kill me now
 
         fontSize = 25;
@@ -662,17 +745,9 @@ class ScrambleRequest {
         rulesList.add("• "+String.format(translate("fmc.rule4", locale), maxMoves));
         rulesList.add("• "+translate("fmc.rule5", locale));
         rulesList.add("• "+translate("fmc.rule6", locale));
-        rulesList.add("  • "+translate("fmc.faceMoves", locale));
-        rulesList.add("    • "+String.format("R     U     F     L     B     D      (%s)", translate("fmc.clockwise", locale)));
-        rulesList.add("    • "+String.format("R'    U'    F'    L'    B'    D'      (%s)", translate("fmc.counterClockwise", locale)));
-        rulesList.add("    • "+String.format("R2   U2   F2   L2   B2   D2    (%s)", translate("fmc.double", locale)));
-        rulesList.add("  • "+translate("fmc.rotations", locale));
-        rulesList.add("    • "+String.format("[r]     [u]     [f]     [l]     [b]     [d]      (%s)", translate("fmc.clockwise", locale)));
-        rulesList.add("    • "+String.format("[r']    [u']    [f']    [l']    [b']    [d']      (%s)", translate("fmc.counterClockwise", locale)));
-        rulesList.add("    • "+String.format("[r2]   [u2]   [f2]   [l2]   [b2]   [d2]    (%s)", translate("fmc.double", locale)));
 
         int rulesTop = competitorInfoBottom + (withScramble ? 65 : 153);
-        Rectangle rulesRectangle = new Rectangle(left+padding, scrambleBorderTop+padding*2, competitorInfoLeft-padding, rulesTop);
+        Rectangle rulesRectangle = new Rectangle(left+padding, scrambleBorderTop+tableHeight, competitorInfoLeft-padding, rulesTop);
 
         String rules = String.join("\n", rulesList);
         float leadingMultiplier = 1.5f; // default pdf leading
@@ -685,12 +760,11 @@ class ScrambleRequest {
         paragraph.setFont(new Font(bf, potentialFontSize));
         paragraph.setMultipliedLeading(leadingMultiplier);
         ct.addElement(paragraph);
-
+        
         ct.go();
-
         doc.newPage();
     }
-
+    
     private static void fitAndShowText(PdfContentByte cb, String text, BaseFont bf, Rectangle rect, float maxFontSize, int align) {
         cb.beginText();
         cb.setFontAndSize(bf, fitText(new Font(bf), text, new Rectangle((int)rect.getRight(), (int)rect.getTop()), maxFontSize, false, 1));
