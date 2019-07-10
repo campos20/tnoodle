@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/tnoodle/static/css/main.6e837ac7.chunk.css",
+    "main.js": "/tnoodle/static/js/main.2515cb25.chunk.js",
+    "main.js.map": "/tnoodle/static/js/main.2515cb25.chunk.js.map",
+    "runtime~main.js": "/tnoodle/static/js/runtime~main.a8327b91.js",
+    "runtime~main.js.map": "/tnoodle/static/js/runtime~main.a8327b91.js.map",
+    "static/js/2.e14a30ad.chunk.js": "/tnoodle/static/js/2.e14a30ad.chunk.js",
+    "static/js/2.e14a30ad.chunk.js.map": "/tnoodle/static/js/2.e14a30ad.chunk.js.map",
+    "index.html": "/tnoodle/index.html",
+    "precache-manifest.1d46b5d0e1602539783ed0b99cb8ccdb.js": "/tnoodle/precache-manifest.1d46b5d0e1602539783ed0b99cb8ccdb.js",
+    "service-worker.js": "/tnoodle/service-worker.js",
+    "static/css/main.6e837ac7.chunk.css.map": "/tnoodle/static/css/main.6e837ac7.chunk.css.map",
+    "static/media/tnoodle_logo.svg": "/tnoodle/static/media/tnoodle_logo.0147e6d0.svg"
+  }
+}
