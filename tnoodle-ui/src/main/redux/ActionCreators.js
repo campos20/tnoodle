@@ -5,11 +5,6 @@ export const updateMe = (me) => ({
     payload: { me },
 });
 
-export const updateEvents = (events) => ({
-    type: ActionTypes.UPDATE_EVENTS,
-    payload: { events },
-});
-
 export const updatePassword = (password) => ({
     type: ActionTypes.UPDATE_PASSWORD,
     payload: { password },

@@ -22,13 +22,13 @@ import {
     fetchMe,
     getUpcomingManageableCompetitions,
     getCompetitionJson,
-    getQueryParameter,
 } from "../api/wca.api";
 import {
     fetchSuggestedFmcTranslations,
     fetchBestMbldAttempt,
 } from "../api/tnoodle.api";
 import {
+    getQueryParameter,
     removeQueryParam,
     updateQueryParam,
 } from "../helper/queryParam.helper";
@@ -109,6 +109,11 @@ const SideBar = connect(
             let competitionId = getQueryParameter("competitionId");
             if (competitionId != null) {
                 this.handleCompetitionSelection(competitionId);
+            }
+
+            let wcif = JSON.parse(getQueryParameter("wcif"));
+            if (wcif != null) {
+                this.props.updateWcif(wcif);
             }
         }
 

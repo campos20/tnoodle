@@ -1,4 +1,8 @@
 import { BASE_PATH } from "../../App";
+import {
+    getQueryParameter,
+    removeQueryParam,
+} from "../helper/queryParam.helper";
 
 // Members of the Software Team can configure this here: https://www.worldcubeassociation.org/oauth/applications/123.
 
@@ -6,6 +10,7 @@ const TNOODLE_ACCESS_TOKEN_KEY = "TNoodle.accessToken";
 const TNOODLE_LAST_LOGIN_ENV = "TNoodle.lastLoginEnv";
 const STAGING = "staging";
 const PRODUCTION = "production";
+const ACCESS_TOKEN = "access_token";
 
 // See https://github.com/thewca/worldcubeassociation.org/wiki/OAuth-documentation-notes#staging-oauth-application
 let getWcaOrigin = () => {
@@ -28,9 +33,9 @@ let getTnoodleAppId = () => {
     );
 };
 
-let wcaAccessToken = getHashParameter("access_token");
+let wcaAccessToken = getQueryParameter(ACCESS_TOKEN);
 if (wcaAccessToken) {
-    window.location.hash = "";
+    removeQueryParam(ACCESS_TOKEN);
     localStorage[TNOODLE_ACCESS_TOKEN_KEY] = wcaAccessToken;
     gotoPreLoginPath();
 } else {
@@ -102,33 +107,6 @@ export function getUpcomingManageableCompetitions() {
     return wcaApiFetch(
         `/competitions?managed_by_me=true&start=${oneWeekAgo.toISOString()}`
     ).then((response) => response.json());
-}
-
-function getHashParameter(name) {
-    return parseQueryString(window.location.hash)[name];
-}
-
-export function getQueryParameter(name) {
-    let urlSplit = window.location.href.split("?");
-    let lastElement = urlSplit.slice(-1)[0];
-    return parseQueryString(lastElement)[name];
-}
-
-// Copied from https://stackoverflow.com/a/3855394/1739415
-function parseQueryString(query) {
-    if (!query) {
-        return {};
-    }
-
-    return (/^[?#]/.test(query) ? query.slice(1) : query)
-        .split("&")
-        .reduce((params, param) => {
-            let [key, value] = param.split("=");
-            params[key] = value
-                ? decodeURIComponent(value.replace(/\+/g, " "))
-                : "";
-            return params;
-        }, {});
 }
 
 const getLastLoginEnv = () => localStorage[TNOODLE_LAST_LOGIN_ENV];

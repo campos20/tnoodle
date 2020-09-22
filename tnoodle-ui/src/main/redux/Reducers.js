@@ -3,10 +3,7 @@ import { defaultWcif } from "../constants/default.wcif";
 import { MBLD_DEFAULT } from "../constants/wca.constants";
 import { getDefaultCopiesExtension } from "../helper/wcif.helper";
 import { competitionName2Id } from "../util/competition.name.util";
-import {
-    removeQueryParam,
-    updateQueryParam,
-} from "../helper/queryParam.helper";
+import { updateQueryParam } from "../helper/queryParam.helper";
 
 const defaultStore = {
     wcif: defaultWcif,
@@ -26,22 +23,11 @@ const defaultStore = {
 
 export const Reducer = (store, action) => {
     if (action.type === ActionTypes.UPDATE_ME) {
-        return {
-            ...store,
-            me: action.payload.me,
-        };
-    }
-
-    if (action.type === ActionTypes.UPDATE_EVENTS) {
-        let wcif = { ...store.wcif, events: action.payload.events };
-        return { ...store, wcif };
+        return { ...store, me: action.payload.me };
     }
 
     if (action.type === ActionTypes.UPDATE_PASSWORD) {
-        return {
-            ...store,
-            password: action.payload.password,
-        };
+        return { ...store, password: action.payload.password };
     }
 
     if (action.type === ActionTypes.UPDATE_COMPETITION_NAME) {
@@ -74,17 +60,11 @@ export const Reducer = (store, action) => {
     }
 
     if (action.type === ActionTypes.UPDATE_MBLD) {
-        return {
-            ...store,
-            mbld: action.payload.mbld,
-        };
+        return { ...store, mbld: action.payload.mbld };
     }
 
     if (action.type === ActionTypes.UPDATE_COMPETITIONS) {
-        return {
-            ...store,
-            competitions: action.payload.competitions,
-        };
+        return { ...store, competitions: action.payload.competitions };
     }
 
     /**
@@ -99,20 +79,11 @@ export const Reducer = (store, action) => {
                 round.extensions.push(getDefaultCopiesExtension())
             )
         );
-
-        updateQueryParam("wcif", wcif);
-
-        return {
-            ...store,
-            wcif,
-        };
+        return { ...store, wcif };
     }
 
     if (action.type === ActionTypes.UPDATE_EDITING_STATUS) {
-        return {
-            ...store,
-            editingDisabled: action.payload.editingDisabled,
-        };
+        return { ...store, editingDisabled: action.payload.editingDisabled };
     }
 
     if (action.type === ActionTypes.UPDATE_COMPETITION_ID) {
@@ -168,10 +139,7 @@ export const Reducer = (store, action) => {
     }
 
     if (action.type === ActionTypes.UPDATE_TRANSLATIONS) {
-        return {
-            ...store,
-            translations: action.payload.translations,
-        };
+        return { ...store, translations: action.payload.translations };
     }
 
     if (action.type === ActionTypes.SELECT_ALL_TRANSLATIONS) {
@@ -200,31 +168,19 @@ export const Reducer = (store, action) => {
                 translation.id
             ),
         }));
-        return {
-            ...store,
-            translations: [...translations],
-        };
+        return { ...store, translations: [...translations] };
     }
 
     if (action.type === ActionTypes.SET_BEST_MBLD_ATTEMPT) {
-        return {
-            ...store,
-            bestMbldAttempt: action.payload.bestMbldAttempt,
-        };
+        return { ...store, bestMbldAttempt: action.payload.bestMbldAttempt };
     }
 
     if (action.type === ActionTypes.SET_WCA_FORMATS) {
-        return {
-            ...store,
-            wcaFormats: action.payload.wcaFormats,
-        };
+        return { ...store, wcaFormats: action.payload.wcaFormats };
     }
 
     if (action.type === ActionTypes.SET_WCA_EVENTS) {
-        return {
-            ...store,
-            wcaEvents: action.payload.wcaEvents,
-        };
+        return { ...store, wcaEvents: action.payload.wcaEvents };
     }
 
     return store || defaultStore;
