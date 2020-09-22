@@ -3,6 +3,10 @@ import { defaultWcif } from "../constants/default.wcif";
 import { MBLD_DEFAULT } from "../constants/wca.constants";
 import { getDefaultCopiesExtension } from "../helper/wcif.helper";
 import { competitionName2Id } from "../util/competition.name.util";
+import {
+    removeQueryParam,
+    updateQueryParam,
+} from "../helper/queryParam.helper";
 
 const defaultStore = {
     wcif: defaultWcif,
@@ -29,10 +33,8 @@ export const Reducer = (store, action) => {
     }
 
     if (action.type === ActionTypes.UPDATE_EVENTS) {
-        return {
-            ...store,
-            wcif: { ...store.wcif, events: action.payload.events },
-        };
+        let wcif = { ...store.wcif, events: action.payload.events };
+        return { ...store, wcif };
     }
 
     if (action.type === ActionTypes.UPDATE_PASSWORD) {
@@ -57,18 +59,18 @@ export const Reducer = (store, action) => {
     }
 
     if (action.type === ActionTypes.UPDATE_WCA_EVENT) {
-        return {
-            ...store,
-            wcif: {
-                ...store.wcif,
-                events: [
-                    ...store.wcif.events.filter(
-                        (wcaEvent) => wcaEvent.id !== action.payload.wcaEvent.id
-                    ),
-                    action.payload.wcaEvent,
-                ],
-            },
+        let wcif = {
+            ...store.wcif,
+            events: [
+                ...store.wcif.events.filter(
+                    (wcaEvent) => wcaEvent.id !== action.payload.wcaEvent.id
+                ),
+                action.payload.wcaEvent,
+            ],
         };
+        updateQueryParam("wcif", wcif);
+
+        return { ...store, wcif };
     }
 
     if (action.type === ActionTypes.UPDATE_MBLD) {
@@ -97,6 +99,9 @@ export const Reducer = (store, action) => {
                 round.extensions.push(getDefaultCopiesExtension())
             )
         );
+
+        updateQueryParam("wcif", wcif);
+
         return {
             ...store,
             wcif,

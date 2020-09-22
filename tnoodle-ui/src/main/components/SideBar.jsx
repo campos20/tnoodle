@@ -28,6 +28,10 @@ import {
     fetchSuggestedFmcTranslations,
     fetchBestMbldAttempt,
 } from "../api/tnoodle.api";
+import {
+    removeQueryParam,
+    updateQueryParam,
+} from "../helper/queryParam.helper";
 import { getDefaultCompetitionName } from "../util/competition.name.util";
 import "./SideBar.css";
 
@@ -127,14 +131,6 @@ const SideBar = connect(
             return string + (number > 1 ? "s" : "");
         };
 
-        currentLocationWithoutQuery = () => {
-            return window.location.origin + window.location.pathname;
-        };
-
-        setPageWithoutRedirect = (url) => {
-            window.history.pushState(null, "", url);
-        };
-
         handleManualSelection = () => {
             this.props.updateEditingStatus(false);
             this.props.updateCompetitionId(null);
@@ -142,11 +138,11 @@ const SideBar = connect(
             this.props.setBestMbldAttempt(null);
             this.props.updateCompetitionName(getDefaultCompetitionName());
             this.props.updateFileZipBlob(null);
-            this.removeCompetitionIdQueryParam();
+            removeQueryParam("competitionId");
         };
 
         handleCompetitionSelection = (competitionId) => {
-            this.updateCompetitionIdQueryParam(competitionId);
+            updateQueryParam("competitionId", competitionId);
 
             // For quick switching between competitions.
             let cachedObject = this.props.cachedObjects[competitionId];
@@ -236,26 +232,6 @@ const SideBar = connect(
                     ],
                 });
             }
-        };
-
-        updateCompetitionIdQueryParam = (competitionId) => {
-            var searchParams = new URLSearchParams(window.location.search);
-            searchParams.set("competitionId", competitionId);
-            this.setPageWithoutRedirect(
-                this.currentLocationWithoutQuery() +
-                    "?" +
-                    searchParams.toString()
-            );
-        };
-
-        removeCompetitionIdQueryParam = () => {
-            var searchParams = new URLSearchParams(window.location.search);
-            searchParams.delete("competitionId");
-            this.setPageWithoutRedirect(
-                this.currentLocationWithoutQuery() +
-                    "?" +
-                    searchParams.toString()
-            );
         };
 
         setWcif = (wcif) => {
