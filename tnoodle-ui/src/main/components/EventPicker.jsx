@@ -18,7 +18,7 @@ const mapStateToProps = (store) => ({
     generatingScrambles: store.generatingScrambles,
     scramblingProgressTarget: store.scramblingProgressTarget,
     scramblingProgressCurrent: store.scramblingProgressCurrent,
-    fileZipBlob: store.fileZipBlob
+    fileZipBlob: store.fileZipBlob,
 });
 
 const mapDispatchToProps = {
@@ -31,11 +31,9 @@ const EventPicker = connect(
     mapDispatchToProps
 )(
     class extends Component {
-        getWcaEvent = (rounds) => {
-            return { id: this.props.event.id, rounds };
-        };
+        getWcaEvent = (rounds) => ({ id: this.props.event.id, rounds });
 
-        handleNumberOfRoundsChange = (numberOfRounds, rounds) => {
+        handleNumberOfRoundsChange(numberOfRounds, rounds) {
             // Ajust the number of rounds in case we have to remove
             while (rounds.length > numberOfRounds) {
                 rounds.pop();
@@ -53,41 +51,41 @@ const EventPicker = connect(
             }
             let wcaEvent = this.getWcaEvent(rounds);
             this.updateEvent(wcaEvent);
-        };
+        }
 
-        handleNumberOfScrambleSetsChange = (round, value, rounds) => {
+        handleNumberOfScrambleSetsChange(round, value, rounds) {
             rounds[round].scrambleSetCount = value;
             let wcaEvent = this.getWcaEvent(rounds);
             this.updateEvent(wcaEvent);
-        };
+        }
 
-        handleRoundFormatChanged = (round, value, rounds) => {
+        handleRoundFormatChanged(round, value, rounds) {
             rounds[round].format = value;
             let wcaEvent = this.getWcaEvent(rounds);
             this.updateEvent(wcaEvent);
-        };
+        }
 
-        handleNumberOfCopiesChange = (round, value, rounds) => {
+        handleNumberOfCopiesChange(round, value, rounds) {
             rounds[round].extensions.find(
                 (extension) => extension.id === copiesExtensionId
             ).data.numCopies = value;
             let wcaEvent = this.getWcaEvent(rounds);
             this.updateEvent(wcaEvent);
-        };
+        }
 
-        abbreviate = (str) => {
+        abbreviate(str) {
             if (this.props.wcaFormats != null) {
                 return this.props.wcaFormats[str].shortName;
             }
             return "-";
-        };
+        }
 
-        updateEvent = (wcaEvent) => {
+        updateEvent(wcaEvent) {
             this.props.updateFileZipBlob(null);
             this.props.updateWcaEvent(wcaEvent);
-        };
+        }
 
-        maybeShowTableTitles = (rounds) => {
+        maybeShowTableTitles(rounds) {
             if (rounds.length === 0) {
                 return null;
             }
@@ -99,9 +97,9 @@ const EventPicker = connect(
                     <th scope="col">Copies</th>
                 </tr>
             );
-        };
+        }
 
-        maybeShowTableBody = (rounds) => {
+        maybeShowTableBody(rounds) {
             if (rounds.length === 0) {
                 return;
             }
@@ -188,19 +186,23 @@ const EventPicker = connect(
                     })}
                 </tbody>
             );
-        };
+        }
 
-        maybeShowProgressBar = (rounds) => {
+        maybeShowProgressBar(rounds) {
             let eventId = this.props.event.id;
 
             let current = this.props.scramblingProgressCurrent[eventId] || 0;
             let target = this.props.scramblingProgressTarget[eventId];
 
-            if (rounds.length === 0 || !this.props.generatingScrambles || target === undefined) {
+            if (
+                rounds.length === 0 ||
+                !this.props.generatingScrambles ||
+                target === undefined
+            ) {
                 return;
             }
 
-            let progress = (current / target) * 100
+            let progress = (current / target) * 100;
             let miniThreshold = 2;
 
             if (progress === 0) {
@@ -208,17 +210,19 @@ const EventPicker = connect(
             }
 
             return (
-                <ProgressBar animated fade variant={
-                    progress === 100
-                        ? "success"
-                        : "info"
-                } now={progress} label={
-                    progress === 100 || progress < miniThreshold
-                        ? ""
-                        : `${current} / ${target}`
-                }/>
+                <ProgressBar
+                    animated
+                    fade
+                    variant={progress === 100 ? "success" : "info"}
+                    now={progress}
+                    label={
+                        progress === 100 || progress < miniThreshold
+                            ? ""
+                            : `${current} / ${target}`
+                    }
+                />
             );
-        };
+        }
 
         render() {
             let wcaEvent = this.props.wcifEvent;

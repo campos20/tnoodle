@@ -259,22 +259,16 @@ export const Reducer = (store, action) => {
     if (action.type === ActionTypes.ADD_MESSAGE) {
         return {
             ...store,
-            wcaEvents: action.payload.wcaEvents,
-        };
-    }
-
-    if (action.type === ActionTypes.ADD_MESSAGE) {
-        return {
-            ...store,
             messages: [...store.messages, action.payload.message],
         };
     }
 
     if (action.type === ActionTypes.REMOVE_MESSAGE) {
-        let index = store.messages.indexOf(action.payload.message);
         return {
             ...store,
-            messages: [...store.messages.filter((_, i) => i !== index)],
+            messages: [
+                ...store.messages.filter((_, i) => i !== action.payload.index),
+            ],
         };
     }
 

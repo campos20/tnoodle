@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { removeMessage } from "../redux/ActionCreators";
+import { Button, Collapse } from "react-bootstrap";
 import "./Message.css";
 
 const mapStateToProps = (store) => ({
@@ -16,18 +17,13 @@ const Message = connect(
     mapDispatchToProps
 )(
     class extends Component {
-        messageDurationInSeconds = 10;
-
         constructor() {
             super();
 
-            this.state = {
-                message: "",
-                stackTrace: "",
-                showMore: false,
-                showThis: false,
-            };
+            this.state = { showMore: [] };
         }
+
+        messageDurationInSeconds = 10;
 
         updateMessage = (data) => {
             // Clear the message after some seconds
@@ -45,68 +41,67 @@ const Message = connect(
             this.setState({ ...this.state, message, stackTrace });
         };
 
-        // If the user clicks show more, message will be there until close.
-        setShowMore = () =>
-            this.setState({ ...this.state, showMore: true, showThis: true });
+        toggle = (i) => {
+            let showMore = this.state.showMore;
+            while (showMore.length < i) {
+                showMore.push(false);
+            }
 
-        showMore = () => {
-            if (!this.state.stackTrace) {
-                return null;
-            }
-            if (this.state.showMore) {
-                return (
-                    <textarea
-                        className="form-control"
-                        value={this.state.stackTrace}
-                        rows="10"
-                        disabled
-                    />
-                );
-            }
-            return (
-                <p className="text-right">
-                    <button
-                        className="btn btn-primary"
-                        onClick={this.setShowMore}
-                    >
-                        Show more
-                    </button>
-                </p>
-            );
+            showMore[i] = !showMore[i];
+            console.log(showMore);
+
+            this.setState({ ...this.state, showMore });
         };
 
-        clear() {
-            this.setState({
-                ...this.state,
-                message: "",
-                showMore: false,
-                stackTrace: "",
-            });
-        }
+        removeMessage = (index) => {
+            let showMore = this.state.showMore.filter((_, i) => i !== index);
+            this.props.removeMessage(index);
+            this.setState({ ...this.state, showMore });
+        };
 
         render() {
-            if (!this.state.message) {
+            if (this.props.messages.length === 0) {
                 return null;
             }
             return (
                 <div className="container-fluid">
-                    <div className="row">
-                        <div className={"col-12 alert alert-danger"}>
+                    {this.props.messages.map((message, i) => (
+                        <div key={i} className={"col-12 alert alert-danger"}>
                             <p>
-                                {this.state.message}
+                                {message.message}
                                 <button
                                     type="button"
                                     className="close"
                                     data-dismiss="modal"
                                     aria-label="Close"
-                                    onClick={this.clear}
+                                    onClick={(e) => this.removeMessage(i)}
                                 >
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </p>
-                            {this.showMore()}
+                            {!!message.object && (
+                                <div>
+                                    <Button
+                                        onClick={() => this.toggle(i)}
+                                        aria-controls="example-collapse-text"
+                                        aria-expanded={this.state.showMore[i]}
+                                    >
+                                        click
+                                    </Button>
+                                    <Collapse in={this.state.showMore[i]}>
+                                        <div id="example-collapse-text">
+                                            Anim pariatur cliche reprehenderit,
+                                            enim eiusmod high life accusamus
+                                            terry richardson ad squid. Nihil
+                                            anim keffiyeh helvetica, craft beer
+                                            labore wes anderson cred nesciunt
+                                            sapiente ea proident.
+                                        </div>
+                                    </Collapse>
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    ))}
                 </div>
             );
         }

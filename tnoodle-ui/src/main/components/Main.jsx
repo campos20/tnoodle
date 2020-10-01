@@ -11,6 +11,7 @@ import {
     updateScramblingProgressTarget,
     updateScramblingProgressCurrentEvent,
     resetScramblingProgressCurrent,
+    addMessage,
 } from "../redux/ActionCreators";
 import { connect } from "react-redux";
 import { isUsingStaging } from "../api/wca.api";
@@ -26,6 +27,7 @@ const mapStateToProps = (store) => ({
     fileZipBlob: store.fileZipBlob,
     translations: store.translations,
     generatingScrambles: store.generatingScrambles,
+    messages: store.messages,
 });
 
 const mapDispatchToProps = {
@@ -34,6 +36,7 @@ const mapDispatchToProps = {
     updateScramblingProgressTarget,
     updateScramblingProgressCurrentEvent,
     resetScramblingProgressCurrent,
+    addMessage,
 };
 
 const Main = connect(
@@ -41,8 +44,8 @@ const Main = connect(
     mapDispatchToProps
 )(
     class extends Component {
-        constructor(props) {
-            super(props);
+        constructor() {
+            super();
 
             this.interceptor = new Interceptor();
 
@@ -54,6 +57,14 @@ const Main = connect(
         onSubmit = (evt) => {
             evt.preventDefault();
 
+            let message = {
+                message: "Message " + Math.random(),
+                object: { error: "Error http" },
+            };
+            this.props.addMessage(message);
+
+            return;
+
             if (this.props.generatingScrambles) {
                 return;
             }
@@ -64,8 +75,6 @@ const Main = connect(
                 this.generateZip();
             }
         };
-
-        addMessage(message) {}
 
         generateZip = () => {
             // If user navigates during generation proccess, we still get the correct name
