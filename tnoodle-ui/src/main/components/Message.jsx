@@ -53,10 +53,14 @@ const Message = connect(
             this.setState({ ...this.state, showMore });
         };
 
-        removeMessage = (index) => {
-            let showMore = this.state.showMore.filter((_, i) => i !== index);
-            this.props.removeMessage(index);
-            this.setState({ ...this.state, showMore });
+        removeMessage = (message) => {
+            // We do not pass index because indexes might change due adding or removal
+            let index = this.props.messages.indexOf(message);
+            if (index >= 0 && !this.state.showMore[index]) {
+                let showMore = this.state.showMore.splice(index, 1);
+                this.setState({ ...this.state, showMore });
+                this.props.removeMessage(index);
+            }
         };
 
         render() {
@@ -64,45 +68,50 @@ const Message = connect(
                 return null;
             }
             return (
-                <div className="container-fluid">
-                    {this.props.messages.map((message, i) => (
-                        <div key={i} className={"col-12 alert alert-danger"}>
-                            <p>
-                                {message.message}
-                                <button
-                                    type="button"
-                                    className="close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                    onClick={(e) => this.removeMessage(i)}
-                                >
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </p>
-                            {!!message.object && (
-                                <div>
-                                    <Button
-                                        onClick={() => this.toggle(i)}
-                                        aria-controls="example-collapse-text"
-                                        aria-expanded={this.state.showMore[i]}
+                <React.Fragment>
+                    {this.props.messages.map((message, i) => {
+                        // We schedule to remove the message
+                        setTimeout(() => {
+                            this.removeMessage(message);
+                        }, 1000 * this.messageDurationInSeconds);
+                        return (
+                            <div key={i} className={"alert alert-danger p-0"}>
+                                <p>
+                                    {message.message}
+                                    <button
+                                        type="button"
+                                        className="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                        onClick={(_) =>
+                                            this.removeMessage(message)
+                                        }
                                     >
-                                        click
-                                    </Button>
-                                    <Collapse in={this.state.showMore[i]}>
-                                        <div id="example-collapse-text">
-                                            Anim pariatur cliche reprehenderit,
-                                            enim eiusmod high life accusamus
-                                            terry richardson ad squid. Nihil
-                                            anim keffiyeh helvetica, craft beer
-                                            labore wes anderson cred nesciunt
-                                            sapiente ea proident.
-                                        </div>
-                                    </Collapse>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </p>
+                                {!!message.object && (
+                                    <div>
+                                        <Button
+                                            onClick={() => this.toggle(i)}
+                                            aria-controls="example-collapse-text"
+                                            aria-expanded={
+                                                this.state.showMore[i]
+                                            }
+                                        >
+                                            Show more &raquo;
+                                        </Button>
+                                        <Collapse in={this.state.showMore[i]}>
+                                            <p>
+                                                {JSON.stringify(message.object)}
+                                            </p>
+                                        </Collapse>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </React.Fragment>
             );
         }
     }
