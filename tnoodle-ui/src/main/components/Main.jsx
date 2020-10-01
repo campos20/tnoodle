@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import EntryInterface from "./EntryInterface";
 import EventPickerTable from "./EventPickerTable";
-import Interceptor from "./Interceptor";
+import Message from "./Message";
 import VersionInfo from "./VersionInfo";
 import { fetchZip } from "../api/tnoodle.api";
 import { ScrambleClient } from "../api/tnoodle.socket";
@@ -10,11 +10,12 @@ import {
     updateGeneratingScrambles,
     updateScramblingProgressTarget,
     updateScramblingProgressCurrentEvent,
-    resetScramblingProgressCurrent
+    resetScramblingProgressCurrent,
 } from "../redux/ActionCreators";
 import { connect } from "react-redux";
 import { isUsingStaging } from "../api/wca.api";
 import "./Main.css";
+import Interceptor from "../config/interceptor";
 
 const mapStateToProps = (store) => ({
     wcif: store.wcif,
@@ -24,7 +25,7 @@ const mapStateToProps = (store) => ({
     officialZip: store.officialZip,
     fileZipBlob: store.fileZipBlob,
     translations: store.translations,
-    generatingScrambles: store.generatingScrambles
+    generatingScrambles: store.generatingScrambles,
 });
 
 const mapDispatchToProps = {
@@ -32,7 +33,7 @@ const mapDispatchToProps = {
     updateGeneratingScrambles,
     updateScramblingProgressTarget,
     updateScramblingProgressCurrentEvent,
-    resetScramblingProgressCurrent
+    resetScramblingProgressCurrent,
 };
 
 const Main = connect(
@@ -42,6 +43,8 @@ const Main = connect(
     class extends Component {
         constructor(props) {
             super(props);
+
+            this.interceptor = new Interceptor();
 
             this.state = {
                 competitionNameFileZip: "",
@@ -61,13 +64,18 @@ const Main = connect(
             }
         };
 
+        addMessage(message) {}
+
         generateZip = () => {
             // If user navigates during generation proccess, we still get the correct name
             this.setState({
                 ...this.state,
                 competitionNameFileZip: this.props.wcif.name,
             });
-            let scrambleClient = new ScrambleClient(this.props.updateScramblingProgressTarget, this.props.updateScramblingProgressCurrentEvent);
+            let scrambleClient = new ScrambleClient(
+                this.props.updateScramblingProgressTarget,
+                this.props.updateScramblingProgressCurrentEvent
+            );
             fetchZip(
                 scrambleClient,
                 this.props.wcif,
@@ -157,7 +165,7 @@ const Main = connect(
             return (
                 <form onSubmit={this.onSubmit}>
                     <div className="sticky-top bg-light">
-                        <Interceptor />
+                        <Message />
                         <VersionInfo />
                         <div className="container-fluid pt-2">
                             <div className="row">

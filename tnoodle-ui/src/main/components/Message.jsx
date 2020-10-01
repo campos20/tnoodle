@@ -1,32 +1,11 @@
 import React, { Component } from "react";
-import fetchIntercept from "fetch-intercept";
-import "./Interceptor.css";
+import "./Message.css";
 
-class Interceptor extends Component {
+class Message extends Component {
     messageDurationInSeconds = 10;
 
     constructor() {
         super();
-
-        // http interceptor
-        fetchIntercept.register({
-            request: (...request) => {
-                // TODO set loading
-                return request;
-            },
-
-            response: (response) => {
-                if (!response.ok) {
-                    this.handleHttpError(response);
-                }
-                return response;
-            },
-
-            responseError: (error) => {
-                this.handleHttpError(error);
-                return Promise.reject(error);
-            },
-        });
 
         this.state = {
             message: "",
@@ -35,15 +14,6 @@ class Interceptor extends Component {
             showThis: false,
         };
     }
-
-    handleHttpError = (error) => {
-        error
-            .json()
-            .then((data) => {
-                this.updateMessage(data);
-            })
-            .catch(() => this.updateMessage(error));
-    };
 
     updateMessage = (data) => {
         // Clear the message after some seconds
@@ -124,4 +94,4 @@ class Interceptor extends Component {
     }
 }
 
-export default Interceptor;
+export default Message;
