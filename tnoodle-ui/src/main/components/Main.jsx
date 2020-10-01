@@ -50,6 +50,7 @@ const Main = connect(
                 competitionNameFileZip: "",
             };
         }
+
         onSubmit = (evt) => {
             evt.preventDefault();
 

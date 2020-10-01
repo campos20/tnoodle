@@ -152,3 +152,13 @@ export const setWcaEvents = (wcaEvents) => ({
     type: ActionTypes.SET_WCA_EVENTS,
     payload: { wcaEvents },
 });
+
+export const addMessage = (message) => ({
+    type: ActionTypes.ADD_MESSAGE,
+    payload: { message },
+});
+
+export const removeMessage = (message) => ({
+    type: ActionTypes.REMOVE_MESSAGE,
+    payload: { message },
+});

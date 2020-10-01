@@ -21,6 +21,7 @@ const defaultStore = {
     wcaFormats: null,
     wcaEvents: null,
     competitions: null,
+    messages: [],
 };
 
 export const Reducer = (store, action) => {
@@ -126,11 +127,17 @@ export const Reducer = (store, action) => {
     }
 
     if (action.type === ActionTypes.UPDATE_GENERATING_SCRAMBLES) {
-        return { ...store, generatingScrambles: action.payload.generatingScrambles };
+        return {
+            ...store,
+            generatingScrambles: action.payload.generatingScrambles,
+        };
     }
 
     if (action.type === ActionTypes.UPDATE_SCRAMBLING_PROGRESS_TARGET) {
-        return { ...store, scramblingProgressTarget: action.payload.scramblingProgressTarget };
+        return {
+            ...store,
+            scramblingProgressTarget: action.payload.scramblingProgressTarget,
+        };
     }
 
     if (action.type === ActionTypes.UPDATE_SCRAMBLING_PROGRESS_CURRENT_EVENT) {
@@ -138,8 +145,10 @@ export const Reducer = (store, action) => {
             ...store,
             scramblingProgressCurrent: {
                 ...store.scramblingProgressCurrent,
-                [action.payload.eventId]: (store.scramblingProgressCurrent[action.payload.eventId] || 0) + 1
-            }
+                [action.payload.eventId]:
+                    (store.scramblingProgressCurrent[action.payload.eventId] ||
+                        0) + 1,
+            },
         };
     }
 
@@ -244,6 +253,28 @@ export const Reducer = (store, action) => {
         return {
             ...store,
             wcaEvents: action.payload.wcaEvents,
+        };
+    }
+
+    if (action.type === ActionTypes.ADD_MESSAGE) {
+        return {
+            ...store,
+            wcaEvents: action.payload.wcaEvents,
+        };
+    }
+
+    if (action.type === ActionTypes.ADD_MESSAGE) {
+        return {
+            ...store,
+            messages: [...store.messages, action.payload.message],
+        };
+    }
+
+    if (action.type === ActionTypes.REMOVE_MESSAGE) {
+        let index = store.messages.indexOf(action.payload.message);
+        return {
+            ...store,
+            messages: [...store.messages.filter((_, i) => i !== index)],
         };
     }
 
