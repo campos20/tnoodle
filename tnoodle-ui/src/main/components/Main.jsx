@@ -14,8 +14,8 @@ import {
 } from "../redux/ActionCreators";
 import { connect } from "react-redux";
 import { isUsingStaging } from "../api/wca.api";
-import "./Main.css";
 import Interceptor from "../config/interceptor";
+import "./Main.css";
 
 const mapStateToProps = (store) => ({
     wcif: store.wcif,
