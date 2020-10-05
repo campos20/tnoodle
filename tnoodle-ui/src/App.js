@@ -8,14 +8,9 @@ class App extends Component {
     render() {
         return (
             <div className="App container-fluid">
+                <SideBar />
                 <div className="row">
-                    <div
-                        className="col-3 bg-dark sticky-top overflow-auto"
-                        id="side-bar"
-                    >
-                        <SideBar />
-                    </div>
-                    <div className="col-9 m-0 p-0">
+                    <div className="col-12 m-0 p-0">
                         <Main />
                     </div>
                 </div>

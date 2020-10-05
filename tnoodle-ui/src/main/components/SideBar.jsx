@@ -1,4 +1,12 @@
 import React, { Component } from "react";
+import {
+    Button,
+    Form,
+    FormControl,
+    Nav,
+    Navbar,
+    NavDropdown,
+} from "react-bootstrap";
 import { connect } from "react-redux";
 import Loading from "./Loading";
 import {
@@ -335,53 +343,25 @@ const SideBar = connect(
 
         render() {
             return (
-                <div className="h-100">
-                    <img
-                        className="tnoodle-logo mt-2"
-                        src={require("../assets/tnoodle_logo.svg")}
-                        alt="TNoodle logo"
-                    />
-                    <h1 className="display-3" id="title">
-                        TNoodle
-                    </h1>
-                    <div>
-                        <ul className="list-group">
-                            <li>
-                                {(this.state.competitions != null &&
-                                    this.state.competitions.length) > 0 && (
-                                    <button
-                                        type="button"
-                                        className={`btn btn-primary btn-lg btn-block btn-outline-light mb-${this.margin}`}
-                                        onClick={this.handleManualSelection}
-                                    >
-                                        Manual Selection
-                                    </button>
-                                )}
-                            </li>
-                            {this.state.competitions != null &&
-                                this.state.competitions.map(
-                                    (competition, i) => (
-                                        <li key={i}>
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary btn-lg btn-block m-1"
-                                                onClick={(_) =>
-                                                    this.handleCompetitionSelection(
-                                                        competition.id
-                                                    )
-                                                }
-                                            >
-                                                {competition.name}
-                                            </button>
-                                        </li>
-                                    )
-                                )}
-                        </ul>
-
-                        {this.loadingArea()}
-                    </div>
-                    {this.logInButton()}
-                </div>
+                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                    <Navbar.Brand href="#home">
+                        <img
+                            src={require("../assets/tnoodle_logo.svg")}
+                            width="30"
+                            height="30"
+                            className="d-inline-block align-top"
+                            alt="React Bootstrap logo"
+                        />
+                    </Navbar.Brand>
+                    <Navbar.Brand href="#home">TNoodle</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Button href="#features">Log In</Button>
+                            <Button href="#features">Manual Selection</Button>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
             );
         }
     }
