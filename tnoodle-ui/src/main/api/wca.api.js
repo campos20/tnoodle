@@ -72,7 +72,7 @@ export function logIn() {
 }
 
 export function isLogged() {
-    if (localStorage[TNOODLE_ACCESS_TOKEN_KEY] == null) {
+    if (wcaAccessToken == null) {
         return false;
     }
 
@@ -80,13 +80,11 @@ export function isLogged() {
         return false;
     }
 
-    let expiration = localStorage[TNOODLE_EXPIRATION];
-
-    if (expiration == null) {
+    if (expiresIn == null) {
         return false;
     }
 
-    if (new Date() < new Date(Number(expiration))) {
+    if (new Date() < new Date(Number(expiresIn))) {
         return true;
     }
 
