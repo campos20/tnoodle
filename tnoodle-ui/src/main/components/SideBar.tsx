@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Collapse } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import tnoodleApi from "../api/tnoodle.api";
 import wcaApi from "../api/wca.api";
@@ -43,15 +42,9 @@ const SideBar = () => {
     const generatingScrambles = useSelector(
         (state: RootState) => state.scramblingSlice.generatingScrambles
     );
-    const [isOpen, setIsOpen] = useState(true);
-
     const dispatch = useDispatch();
 
-    const handleIsOpen = () => setIsOpen(window.innerWidth > 992);
-
     const init = () => {
-        window.addEventListener("resize", handleIsOpen);
-
         if (!wcaApi.isLogged()) {
             return;
         }
@@ -272,69 +265,44 @@ const SideBar = () => {
                 <h1 className="display-3" id="title">
                     TNoodle
                 </h1>
-                <button
-                    type="button"
-                    className="btn btn-primary btn-lg btn-outline-light ml-auto d-lg-none"
-                    onClick={() => setIsOpen(!isOpen)}
-                    disabled={generatingScrambles}
-                    aria-label="Toggle menu"
-                    aria-expanded={isOpen}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 30 30"
-                        width={30}
-                        height={30}
-                    >
-                        <path
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeMiterlimit={10}
-                            d="M4 7h22M4 15h22M4 23h22"
-                        />
-                    </svg>
-                </button>
             </div>
-            <Collapse in={isOpen}>
-                <div className="pt-2">
-                    <div>
-                        <ul className="list-group">
-                            <li>
-                                {!!competitions && competitions.length > 0 && (
+            <div className="pt-2">
+                <div>
+                    <ul className="list-group">
+                        <li>
+                            {!!competitions && competitions.length > 0 && (
+                                <button
+                                    type="button"
+                                    className="btn btn-primary btn-lg btn-block btn-outline-light mb-1"
+                                    onClick={handleManualSelection}
+                                    disabled={generatingScrambles}
+                                >
+                                    Manual Selection
+                                </button>
+                            )}
+                        </li>
+                        {!!competitions &&
+                            competitions.map((competition) => (
+                                <li key={competition.id}>
                                     <button
                                         type="button"
-                                        className="btn btn-primary btn-lg btn-block btn-outline-light mb-1"
-                                        onClick={handleManualSelection}
+                                        className="btn btn-primary btn-lg btn-block m-1"
                                         disabled={generatingScrambles}
+                                        onClick={() =>
+                                            handleCompetitionSelection(
+                                                competition.id
+                                            )
+                                        }
                                     >
-                                        Manual Selection
+                                        {competition.name}
                                     </button>
-                                )}
-                            </li>
-                            {!!competitions &&
-                                competitions.map((competition) => (
-                                    <li key={competition.id}>
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary btn-lg btn-block m-1"
-                                            disabled={generatingScrambles}
-                                            onClick={() =>
-                                                handleCompetitionSelection(
-                                                    competition.id
-                                                )
-                                            }
-                                        >
-                                            {competition.name}
-                                        </button>
-                                    </li>
-                                ))}
-                        </ul>
-                        {loadingArea()}
-                    </div>
-                    {logInButton()}
+                                </li>
+                            ))}
+                    </ul>
+                    {loadingArea()}
                 </div>
-            </Collapse>
+                {logInButton()}
+            </div>
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { MAX_WCA_ROUNDS } from "../constants/wca.constants";
 import RootState from "../model/RootState";
@@ -226,18 +225,20 @@ const EventPicker = ({ wcaEvent, wcifEvent }: EventPickerProps) => {
             progress = miniThreshold;
         }
 
-        return (
-            <ProgressBar
-                animated
-                variant={progress === 100 ? "success" : "info"}
-                now={progress}
-                label={
-                    progress === 100 || progress < miniThreshold
-                        ? ""
-                        : `${current} / ${target}`
-                }
-            />
-        );
+        return `${current} / ${target}`;
+
+        // return ( // TODO
+        //     <ProgressBar
+        //         animated
+        //         variant={progress === 100 ? "success" : "info"}
+        //         now={progress}
+        //         label={
+        //             progress === 100 || progress < miniThreshold
+        //                 ? ""
+        //                 : `${current} / ${target}`
+        //         }
+        //     />
+        // );
     };
 
     let rounds = wcifEvent?.rounds || [];
