@@ -32,15 +32,6 @@
     }
 }
 
-#title {
-    margin: 0px;
-    margin-bottom: 10px;
-    font-size: 300%;
-    color: #fff;
-    font-variant: small-caps;
-    text-shadow: 2px 2px 5px #888;
-}
-
 nav li {
     font-size: 20px;
 }
@@ -65,12 +56,5 @@ nav li {
         position: sticky;
         top: 0;
         z-index: 1020;
-    }
-}
-
-@media (max-width: 991.98px) {
-    #title {
-        margin-bottom: 0;
-        margin-left: 12px;
     }
 }

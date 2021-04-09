@@ -1,3 +1,23 @@
-ul {
-    list-style-type: none;
+#tnoodle-logo {
+    width: 50%;
+    height: auto;
+    margin: 15px 0;
+}
+
+#tnoodle-logo-wrapper {
+    padding: 5px;
+    text-align: center;
+}
+
+#title {
+    margin: 0px;
+    margin-bottom: 10px;
+    font-size: 300%;
+    color: #fff;
+    font-variant: small-caps;
+    text-shadow: 2px 2px 5px #888;
+}
+
+#welcome-user {
+    color: #fff;
 }

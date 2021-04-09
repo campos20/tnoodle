@@ -1,3 +1,10 @@
+import {
+    DesktopOutlined,
+    SelectOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import "antd/dist/antd.css";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import tnoodleApi from "../api/tnoodle.api";
@@ -27,7 +34,10 @@ import { defaultWcif } from "../util/wcif.util";
 import Loading from "./Loading";
 import "./SideBar.css";
 
+const { Sider } = Layout;
+
 const SideBar = () => {
+    const [collapsed, setCollapsed] = useState(false);
     const [loadingUser, setLoadingUser] = useState(false);
     const [loadingCompetitions, setLoadingCompetitions] = useState(false);
     const [loadingCompetitionInfo, setLoadingCompetitionInfo] = useState(false);
@@ -44,25 +54,28 @@ const SideBar = () => {
     );
     const dispatch = useDispatch();
 
-    const init = () => {
+    const getUserInfo = () => {
         if (!wcaApi.isLogged()) {
             return;
         }
-        if (!me) {
-            setLoadingUser(true);
-            wcaApi
-                .fetchMe()
-                .then((response) => dispatch(setMe(response.data.me)))
-                .finally(() => setLoadingUser(false));
+
+        setLoadingUser(true);
+        wcaApi
+            .fetchMe()
+            .then((response) => dispatch(setMe(response.data.me)))
+            .finally(() => setLoadingUser(false));
+    };
+
+    const getCompetitionInfo = () => {
+        if (!wcaApi.isLogged() || !!competitions) {
+            return;
         }
 
-        if (!competitions) {
-            setLoadingCompetitions(true);
-            wcaApi
-                .getUpcomingManageableCompetitions()
-                .then((response) => dispatch(setCompetitions(response.data)))
-                .finally(() => setLoadingCompetitions(false));
-        }
+        setLoadingCompetitions(true);
+        wcaApi
+            .getUpcomingManageableCompetitions()
+            .then((response) => dispatch(setCompetitions(response.data)))
+            .finally(() => setLoadingCompetitions(false));
 
         let competitionId = getQueryParameter("competitionId");
         if (!!competitionId) {
@@ -205,34 +218,12 @@ const SideBar = () => {
         ]
     );
 
-    useEffect(init, [competitions, dispatch, handleCompetitionSelection, me]);
-
-    const logInButton = () => {
-        return (
-            <div id="login-area" className="w-100 mt-1">
-                <button
-                    type="button"
-                    className="btn btn-primary btn-lg btn-block"
-                    onClick={wcaApi.isLogged() ? wcaApi.logOut : wcaApi.logIn}
-                    disabled={generatingScrambles}
-                >
-                    {wcaApi.isLogged() ? "Log Out" : "Log In"}
-                </button>
-                {!!me && (
-                    <p className="text-white mt-2">
-                        Welcome, {me.name}.
-                        {!!competitions &&
-                            ` You have ${
-                                competitions.length
-                            } manageable ${pluralize(
-                                " competition",
-                                competitions.length
-                            )} upcoming.`}
-                    </p>
-                )}
-            </div>
-        );
-    };
+    useEffect(getUserInfo, [dispatch]);
+    useEffect(getCompetitionInfo, [
+        dispatch,
+        handleCompetitionSelection,
+        competitions,
+    ]);
 
     const loadingElement = (text: string) => (
         <div className="text-white">
@@ -255,55 +246,58 @@ const SideBar = () => {
         }
     };
     return (
-        <div className="h-100 pb-2">
-            <div className="d-flex flex-lg-column align-items-center overflow-hidden">
-                <img
-                    className="tnoodle-logo mt-2"
-                    src={logo}
-                    alt="TNoodle logo"
-                />
-                <h1 className="display-3" id="title">
-                    TNoodle
-                </h1>
-            </div>
-            <div className="pt-2">
-                <div>
-                    <ul className="list-group">
-                        <li>
-                            {!!competitions && competitions.length > 0 && (
-                                <button
-                                    type="button"
-                                    className="btn btn-primary btn-lg btn-block btn-outline-light mb-1"
-                                    onClick={handleManualSelection}
-                                    disabled={generatingScrambles}
-                                >
-                                    Manual Selection
-                                </button>
-                            )}
-                        </li>
-                        {!!competitions &&
-                            competitions.map((competition) => (
-                                <li key={competition.id}>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary btn-lg btn-block m-1"
-                                        disabled={generatingScrambles}
-                                        onClick={() =>
-                                            handleCompetitionSelection(
-                                                competition.id
-                                            )
-                                        }
-                                    >
-                                        {competition.name}
-                                    </button>
-                                </li>
-                            ))}
-                    </ul>
-                    {loadingArea()}
+        <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
+            <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+                <div id="tnoodle-logo-wrapper">
+                    <img src={logo} alt="TNoodle logo" id="tnoodle-logo" />
+                    {!collapsed && <h1 id="title">TNoodle</h1>}
                 </div>
-                {logInButton()}
-            </div>
-        </div>
+
+                {!!competitions && competitions.length > 0 && (
+                    <Menu.Item
+                        key="1"
+                        icon={<SelectOutlined />}
+                        onClick={handleManualSelection}
+                    >
+                        Manual Selection
+                    </Menu.Item>
+                )}
+                {competitions?.map((competition) => (
+                    <Menu.Item
+                        key={competition.id}
+                        icon={<DesktopOutlined />}
+                        disabled={generatingScrambles}
+                        onClick={() =>
+                            handleCompetitionSelection(competition.id)
+                        }
+                    >
+                        {competition.name}
+                    </Menu.Item>
+                ))}
+                <Menu.Item
+                    key="login"
+                    icon={<UserOutlined />}
+                    onClick={wcaApi.isLogged() ? wcaApi.logOut : wcaApi.logIn}
+                    disabled={generatingScrambles}
+                >
+                    {wcaApi.isLogged() ? "Log Out" : "Log In"}
+                </Menu.Item>
+            </Menu>
+
+            {!!me && !collapsed && (
+                <p id="welcome-user">
+                    Welcome, {me.name}.
+                    {!!competitions &&
+                        ` You have ${
+                            competitions.length
+                        } manageable ${pluralize(
+                            " competition",
+                            competitions.length
+                        )} upcoming.`}
+                </p>
+            )}
+            <div>{loadingArea()}</div>
+        </Sider>
     );
 };
 
