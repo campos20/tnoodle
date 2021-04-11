@@ -183,9 +183,9 @@ const EventPicker = ({ wcaEvent, wcifEvent }: EventPickerProps) => {
                         disabled={!editingStatus || generatingScrambles}
                     >
                         {Array.from({ length: MAX_WCA_ROUNDS + 1 }, (_, i) => (
-                            <option key={i} value={i}>
+                            <Select.Option key={i} value={i}>
                                 {i}
-                            </option>
+                            </Select.Option>
                         ))}
                     </Select>
                 </Col>
@@ -211,9 +211,9 @@ const EventPicker = ({ wcaEvent, wcifEvent }: EventPickerProps) => {
                         disabled={!editingStatus || generatingScrambles}
                     >
                         {wcaEvent.format_ids.map((format) => (
-                            <option key={format} value={format}>
+                            <Select.Option key={format} value={format}>
                                 {abbreviate(format)}
-                            </option>
+                            </Select.Option>
                         ))}
                     </Select>
                 </Col>

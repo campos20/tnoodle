@@ -1,3 +1,4 @@
+import { Col, Row } from "antd";
 import { chunk } from "lodash";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -99,20 +100,23 @@ const EventPickerTable = () => {
             {maybeShowEditWarning()}
             {eventChunks.map((chunk, i) => {
                 return (
-                    <div className="row p-0" key={i}>
+                    <Row key={i} gutter={[16, 24]}>
                         {chunk.map((wcaEvent) => {
                             return (
-                                <div className="col-lg-6" key={wcaEvent.id}>
+                                <Col
+                                    span={24 / EVENTS_PER_LINE}
+                                    key={wcaEvent.id}
+                                >
                                     <EventPicker
                                         wcaEvent={wcaEvent}
                                         wcifEvent={wcif.events.find(
                                             (item) => item.id === wcaEvent.id
                                         )}
                                     />
-                                </div>
+                                </Col>
                             );
                         })}
-                    </div>
+                    </Row>
                 );
             })}
         </div>
