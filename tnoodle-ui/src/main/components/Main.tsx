@@ -1,4 +1,5 @@
-import { SyntheticEvent, useRef, useState } from "react";
+import { Button, Col, Form, message, Row } from "antd";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import tnoodleApi from "../api/tnoodle.api";
 import { ScrambleClient } from "../api/tnoodle.socket";
@@ -44,8 +45,8 @@ const Main = () => {
 
     const dispatch = useDispatch();
 
-    const onSubmit = (evt: SyntheticEvent) => {
-        evt.preventDefault();
+    const onSubmit = () => {
+        message.info("Generating");
 
         if (generatingScrambles) {
             return;
@@ -114,20 +115,20 @@ const Main = () => {
     const scrambleButton = () => {
         if (generatingScrambles) {
             return (
-                <button
-                    className="btn btn-primary button-transparent form-control"
+                <Button
                     title="Wait until the process is done"
+                    type="primary"
                     disabled
                 >
                     Generating Scrambles
-                </button>
+                </Button>
             );
         }
         if (!!fileZip) {
             return (
-                <button type="submit" className="btn btn-success form-control">
+                <Button htmlType="submit" type="primary">
                     Download Scrambles
-                </button>
+                </Button>
             );
         }
 
@@ -136,39 +137,33 @@ const Main = () => {
             .map((event) => event.rounds.length > 0)
             .reduce((flag1, flag2) => flag1 || flag2, false);
 
-        // In case the user did not select any events, we make the button a little more transparent than disabled
-        let btnClass =
-            "btn btn-primary form-control" +
-            (disableScrambleButton ? " button-transparent" : "");
         return (
-            <button
-                type="submit"
-                className={btnClass}
+            <Button
+                type="primary"
+                htmlType="submit"
                 disabled={disableScrambleButton}
                 title={disableScrambleButton ? "No events selected." : ""}
             >
                 Generate Scrambles
-            </button>
+            </Button>
         );
     };
 
     return (
-        <form onSubmit={onSubmit}>
-            <div className="sticky-top bg-light">
+        <Form onFinish={onSubmit}>
+            <div>
                 <Interceptor ref={interceptorRef} />
                 <VersionInfo />
-                <div className="container-fluid pt-2">
-                    <div className="row">
-                        <EntryInterface />
-                        <div className="col-sm-4 form-group">
-                            <label>&nbsp;</label>
-                            {scrambleButton()}
-                        </div>
-                    </div>
-                </div>
+                <Row>
+                    <EntryInterface />
+                    <Col span={8}>
+                        &nbsp; {/* Align */}
+                        <Form.Item>{scrambleButton()}</Form.Item>
+                    </Col>
+                </Row>
             </div>
             <EventPickerTable />
-        </form>
+        </Form>
     );
 };
 

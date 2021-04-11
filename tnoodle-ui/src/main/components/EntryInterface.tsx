@@ -1,13 +1,10 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Col, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import RootState from "../model/RootState";
 import { setFileZip, setPassword } from "../redux/slice/ScramblingSlice";
 import { setCompetitionName } from "../redux/slice/WcifSlice";
 
 const EntryInterface = () => {
-    const [showPassword, setShowPassword] = useState(false);
-
     const editingStatus = useSelector(
         (state: RootState) => state.wcifSlice.editingStatus
     );
@@ -39,47 +36,29 @@ const EntryInterface = () => {
 
     return (
         <>
-            <div className="col-sm-4 text-left form-group">
-                <label className="font-weight-bold" htmlFor="competition-name">
-                    Competition Name
-                </label>
-                <input
+            <Col span={8}>
+                <label>Competition name</label>
+                <Input
                     id="competition-name"
-                    className="form-control"
                     placeholder="Competition Name"
                     onChange={(e) =>
                         handleCompetitionNameChange(e.target.value)
                     }
                     value={competitionName}
                     disabled={!editingStatus || generatingScrambles}
-                    required
                 />
-            </div>
+            </Col>
 
-            <div className="col-sm-4 text-left form-group">
-                <label className="font-weight-bold" htmlFor="password">
-                    Password
-                </label>
-                <div className="input-group">
-                    <input
-                        id="password"
-                        className="form-control"
-                        placeholder="Password"
-                        type={showPassword ? "" : "password"}
-                        onChange={(e) => handlePasswordChange(e.target.value)}
-                        value={password}
-                        disabled={generatingScrambles}
-                    />
-                    <div
-                        className="input-group-prepend"
-                        onClick={() => setShowPassword(!showPassword)}
-                    >
-                        <span className="input-group-text">
-                            {showPassword ? <FaEye /> : <FaEyeSlash />}
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <Col span={8}>
+                <label>Password</label>
+                <Input.Password
+                    id="password"
+                    placeholder="Password"
+                    onChange={(e) => handlePasswordChange(e.target.value)}
+                    value={password}
+                    disabled={generatingScrambles}
+                />
+            </Col>
         </>
     );
 };

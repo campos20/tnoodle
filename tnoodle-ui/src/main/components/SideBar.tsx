@@ -216,7 +216,7 @@ const SideBar = () => {
     );
 
     useEffect(getUserInfo, [dispatch]);
-    useEffect(getCompetitionInfo, [dispatch]);
+    useEffect(getCompetitionInfo, [dispatch, competitions]);
 
     const loadingElement = (text: string) => (
         <div className="text-white">

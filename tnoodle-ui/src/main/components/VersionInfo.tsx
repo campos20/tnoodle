@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { Alert } from "antd";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import tnoodleApi from "../api/tnoodle.api";
 import wcaApi from "../api/wca.api";
@@ -45,6 +46,8 @@ const VersionInfo = () => {
         });
     }, [dispatch]);
 
+    const tnoodleLink = <a href={currentTnoodle?.download}>here</a>;
+
     // This avoids global state update while rendering
     const analyzeVerion = () => {
         // We wait until both wca and tnoodle answers
@@ -76,34 +79,44 @@ const VersionInfo = () => {
         // Running version is allowed, but not the latest.
         if (allowedTnoodleVersions.includes(runningVersion)) {
             return (
-                <div className="alert alert-info m-0">
-                    You are running {runningVersion}, which is still allowed,
-                    but you should upgrade to {currentTnoodle?.name} available{" "}
-                    <a href={currentTnoodle?.download}>here</a> as soon as
-                    possible.
-                </div>
+                <Alert
+                    type="info"
+                    message={
+                        <>
+                            You are running {runningVersion}, which is still
+                            allowed, but you should upgrade to{" "}
+                            {currentTnoodle?.name} available {tnoodleLink} as
+                            soon as possible
+                        </>
+                    }
+                />
             );
         }
 
         return (
-            <div className="alert alert-danger m-0">
-                You are running {runningVersion}, which is not allowed. Do not
-                use scrambles generated in any official competition and consider
-                downloading the latest version{" "}
-                <a href={currentTnoodle?.download}>here</a>.
-            </div>
+            <Alert
+                type="error"
+                message={
+                    <>
+                        You are running {runningVersion}, which is not allowed.
+                        Do not use scrambles generated in any official
+                        competition and consider downloading the latest version{" "}
+                        {tnoodleLink}.
+                    </>
+                }
+            ></Alert>
         );
     }
 
     // Generated version is not an officially signed jar
     if (!signatureValid) {
         return (
-            <div className="alert alert-danger m-0">
-                You are running an unsigned TNoodle release. Do not use
-                scrambles generated in any official competition and consider
-                downloading the official program{" "}
-                <a href={currentTnoodle.download}>here</a>
-            </div>
+            <Alert
+                type="error"
+                message={`You are running an unsigned TNoodle release. Do not use scrambles generated in any official competition and consider downloading the official program ${(
+                    <a href={currentTnoodle.download}>here</a>
+                )}`}
+            ></Alert>
         );
     }
 
