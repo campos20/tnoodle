@@ -25,11 +25,7 @@ import {
     setWcif,
 } from "../redux/slice/WcifSlice";
 import { getDefaultCompetitionName } from "../util/competition.name.util";
-import {
-    deleteParameter,
-    getQueryParameter,
-    setQueryParameter,
-} from "../util/query.param.util";
+import { deleteParameter, setQueryParameter } from "../util/query.param.util";
 import { defaultWcif } from "../util/wcif.util";
 import Loading from "./Loading";
 import "./SideBar.css";
@@ -77,10 +73,11 @@ const SideBar = () => {
             .then((response) => dispatch(setCompetitions(response.data)))
             .finally(() => setLoadingCompetitions(false));
 
-        let competitionId = getQueryParameter("competitionId");
-        if (!!competitionId) {
-            handleCompetitionSelection(competitionId);
-        }
+        // TODO
+        // let competitionId = getQueryParameter("competitionId");
+        // if (!!competitionId) {
+        //     handleCompetitionSelection(competitionId);
+        // }
     };
 
     const pluralize = (string: string, number: number) =>
@@ -219,11 +216,7 @@ const SideBar = () => {
     );
 
     useEffect(getUserInfo, [dispatch]);
-    useEffect(getCompetitionInfo, [
-        dispatch,
-        handleCompetitionSelection,
-        competitions,
-    ]);
+    useEffect(getCompetitionInfo, [dispatch]);
 
     const loadingElement = (text: string) => (
         <div className="text-white">

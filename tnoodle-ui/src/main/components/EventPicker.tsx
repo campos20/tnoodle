@@ -1,3 +1,4 @@
+import { Card, Col, Input, Row, Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MAX_WCA_ROUNDS } from "../constants/wca.constants";
@@ -116,95 +117,12 @@ const EventPicker = ({ wcaEvent, wcifEvent }: EventPickerProps) => {
             return null;
         }
         return (
-            <tr className="thead-light">
-                <th scope="col">#</th>
-                <th scope="col">Format</th>
-                <th scope="col">Scramble Sets</th>
-                <th scope="col">Copies</th>
-            </tr>
-        );
-    };
-
-    const maybeShowTableBody = (rounds: Round[]) => {
-        if (rounds.length === 0) {
-            return;
-        }
-
-        return (
-            <tbody>
-                {Array.from({ length: rounds.length }, (_, i) => {
-                    let copies = rounds[i].extensions.find(
-                        (extension) => extension.id === copiesExtensionId
-                    )?.data.numCopies;
-                    return (
-                        <tr key={i} className="form-group">
-                            <th scope="row" className="align-middle">
-                                {i + 1}
-                            </th>
-                            <td className="align-middle">
-                                <select
-                                    className="form-control"
-                                    value={rounds[i].format}
-                                    onChange={(evt) =>
-                                        handleGeneralRoundChange(
-                                            i,
-                                            evt.target.value,
-                                            rounds,
-                                            "format"
-                                        )
-                                    }
-                                    disabled={
-                                        !editingStatus || generatingScrambles
-                                    }
-                                >
-                                    {wcaEvent.format_ids.map((format) => (
-                                        <option key={format} value={format}>
-                                            {abbreviate(format)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td>
-                                <input
-                                    className="form-control"
-                                    type="number"
-                                    value={rounds[i].scrambleSetCount}
-                                    onChange={(evt) =>
-                                        handleGeneralRoundChange(
-                                            i,
-                                            evt.target.value,
-                                            rounds,
-                                            "scrambleSetCount"
-                                        )
-                                    }
-                                    min={1}
-                                    required
-                                    disabled={
-                                        !editingStatus || generatingScrambles
-                                    }
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    className="form-control"
-                                    type="number"
-                                    value={copies}
-                                    onChange={(evt) =>
-                                        handleNumberOfCopiesChange(
-                                            i,
-                                            evt.target.value,
-                                            rounds
-                                        )
-                                    }
-                                    min={1}
-                                    required
-                                    disabled={generatingScrambles}
-                                />
-                            </td>
-                        </tr>
-                    );
-                })}
-            </tbody>
+            <Row>
+                <Col span={2}>#</Col>
+                <Col span={6}>Format</Col>
+                <Col span={8}>Scramble Sets</Col>
+                <Col span={8}>Copies</Col>
+            </Row>
         );
     };
 
@@ -241,64 +159,118 @@ const EventPicker = ({ wcaEvent, wcifEvent }: EventPickerProps) => {
         // );
     };
 
+    const getTitle = () => (
+        <>
+            <Row>
+                <Col span={8}>
+                    <img
+                        className="img-thumbnail cubingIcon"
+                        src={image}
+                        alt={wcaEvent.name}
+                    />
+                </Col>
+                <Col span={8}>
+                    <h2>{wcaEvent.name}</h2>
+                    <label>Rounds</label>
+                </Col>
+                <Col span={8}>
+                    <Select<number>
+                        className="form-control"
+                        value={rounds.length}
+                        onChange={(value) =>
+                            handleNumberOfRoundsChange(value, rounds)
+                        }
+                        disabled={!editingStatus || generatingScrambles}
+                    >
+                        {Array.from({ length: MAX_WCA_ROUNDS + 1 }, (_, i) => (
+                            <option key={i} value={i}>
+                                {i}
+                            </option>
+                        ))}
+                    </Select>
+                </Col>
+            </Row>
+            {maybeShowProgressBar(rounds)}
+        </>
+    );
+    const getBody = (i: number) => {
+        let copies = rounds[i].extensions.find(
+            (extension) => extension.id === copiesExtensionId
+        )?.data.numCopies;
+
+        return (
+            <Row key={i}>
+                <Col span={2}>{i + 1}</Col>
+                <Col span={6}>
+                    <Select<string>
+                        className="form-control"
+                        value={rounds[i].format}
+                        onChange={(value) =>
+                            handleGeneralRoundChange(i, value, rounds, "format")
+                        }
+                        disabled={!editingStatus || generatingScrambles}
+                    >
+                        {wcaEvent.format_ids.map((format) => (
+                            <option key={format} value={format}>
+                                {abbreviate(format)}
+                            </option>
+                        ))}
+                    </Select>
+                </Col>
+                <Col span={8}>
+                    <Input
+                        className="form-control"
+                        type="number"
+                        value={rounds[i].scrambleSetCount}
+                        onChange={(evt) =>
+                            handleGeneralRoundChange(
+                                i,
+                                evt.target.value,
+                                rounds,
+                                "scrambleSetCount"
+                            )
+                        }
+                        min={1}
+                        required
+                        disabled={!editingStatus || generatingScrambles}
+                    />
+                </Col>
+                <Col span={8}>
+                    <Input
+                        className="form-control"
+                        type="number"
+                        value={copies}
+                        onChange={(evt) =>
+                            handleNumberOfCopiesChange(
+                                i,
+                                evt.target.value,
+                                rounds
+                            )
+                        }
+                        min={1}
+                        required
+                        disabled={generatingScrambles}
+                    />
+                </Col>
+            </Row>
+        );
+    };
+
     let rounds = wcifEvent?.rounds || [];
 
     return (
-        <table className="table table-sm shadow rounded">
-            <thead>
-                <tr
-                    className={
-                        rounds.length === 0
-                            ? "thead-dark text-white"
-                            : "thead-light"
-                    }
-                >
-                    <th className="firstColumn" scope="col"></th>
-                    <th scope="col" className="align-middle secondColumn">
-                        <img
-                            className="img-thumbnail cubingIcon"
-                            src={image}
-                            alt={wcaEvent.name}
-                        />
-                    </th>
-                    <th className="align-middle lastTwoColumns" scope="col">
-                        <h5 className="font-weight-bold">{wcaEvent.name}</h5>
-                        {maybeShowProgressBar(rounds)}
-                    </th>
-                    <th className="lastTwoColumns" scope="col">
-                        <label>Rounds</label>
-                        <select
-                            className="form-control"
-                            value={rounds.length}
-                            onChange={(evt) =>
-                                handleNumberOfRoundsChange(
-                                    Number(evt.target.value),
-                                    rounds
-                                )
-                            }
-                            disabled={!editingStatus || generatingScrambles}
-                        >
-                            {Array.from(
-                                { length: MAX_WCA_ROUNDS + 1 },
-                                (_, i) => (
-                                    <option key={i} value={i}>
-                                        {i}
-                                    </option>
-                                )
-                            )}
-                        </select>
-                    </th>
-                </tr>
+        <>
+            <Card title={getTitle()}>
                 {maybeShowTableTitles(rounds)}
-            </thead>
-            {maybeShowTableBody(rounds)}
-            {wcaEvent.is_multiple_blindfolded && rounds.length > 0 && (
-                <MbldDetail />
-            )}
-            {wcaEvent.is_fewest_moves && rounds.length > 0 && (
-                <FmcTranslationsDetail />
-            )}
-        </table>
+                {rounds.map((_, i) => getBody(i))}
+                {wcaEvent.is_multiple_blindfolded && rounds.length > 0 && (
+                    <MbldDetail />
+                )}
+                {wcaEvent.is_fewest_moves && rounds.length > 0 && (
+                    <FmcTranslationsDetail />
+                )}
+            </Card>
+        </>
     );
 };
 
